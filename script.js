@@ -12,10 +12,12 @@ var victory = false;
 var clearedCellsCount = 0;
 
 // Cell constructor
-function Cell() {
-  this.discovered = false;
-  this.isBomb = false;
-  this.hasBeenFlagged = false;
+class Cell {
+  constructor() {
+    this.discovered = false;
+    this.isBomb = false;
+    this.hasBeenFlagged = false;
+  }
 }
 
 // Initialize cells
@@ -59,28 +61,21 @@ render();
 //
 
 function discoverCell(row, col, event) {
-  if (cells[row][col].hasBeenFlagged) {
-    return;
-  }
   //
   // TODO: Task 8 - Implement defeat. If the player "discovers" a bomb (clicks on it without holding shift), set the variable defeat to true.
   //
   if (cells[row][col].isBomb) {
     defeat = true;
-    document.body.classList.add("defeat");
-    message.innerHTML = "You lost. Click anywhere to start again.";
+    getMessage();
   } else {
     //
     // TODO: Task 5 - Reveal cells when clicked.
     //
     cells[row][col].discovered = true;
     clearedCellsCount++;
-    const cellElement = document.querySelector(`#playfield div:nth-child(${row+1}) div:nth-child(${col+1})`);
-    cellElement.classList.add("discovered");
-    if (clearedCellsCount == ROWS_COUNT * COLS_COUNT - BOMBS_COUNT) {
+    if (checkForVictory()) {
       victory = true;
-      document.body.classList.add("victory");
-      message.innerHTML = "You won! Click anywhere to start again.";
+      getMessage();
     }
     //
     // TODO: Task 6 - Discover neighbor cells recursively, as long as there are no adjacent bombs to the current cell.
@@ -89,7 +84,7 @@ function discoverCell(row, col, event) {
       for (var i = row - 1; i <= row + 1; i++) {
         for (var j = col - 1; j <= col + 1; j++) {
           if (i >= 0 && i < ROWS_COUNT && j >= 0 && j < COLS_COUNT && !(i == row && j == col) 
-          && !cells[i][j].discovered && !cells[i][j].hasBomb && !cells[i][j].hasBeenFlagged) {
+          && !cells[i][j].discovered && !cells[i][j].hasBomb) {
             discoverCell(i, j);
           }
         }
@@ -132,12 +127,12 @@ function getBombsCount() {
   var count = 0;
   for (var row = 0; row < ROWS_COUNT; row++) {
     for (var col = 0; col < COLS_COUNT; col++) {
-      if (cells[row][col].isBomb && !cells[row][col].hasBeenFlagged) {
+      if (cells[row][col].hasBeenFlagged) {
         count++;
       }
     }
   }
-  return count;
+  return count + "/" + BOMBS_COUNT;
 }
 
 function getClearedCells() {
@@ -206,16 +201,19 @@ function render() {
           cellText = "💣";
         } else {
           var adjBombs = countAdjacentBombs(row, col);
+
           if (adjBombs > 0) {
             cellText = adjBombs.toString();
-            if (adjBombs == 1) {
-              textColor = "blue";
-            } else if (adjBombs == 2) {
-              textColor = "green";
-            } else if (adjBombs == 3) {
-              textColor = "red";
-            } else if (adjBombs == 4) {
-              textColor = "black";
+            // Copilot, refactor the next block to a switchcase:
+            switch (adjBombs) {
+              case 1: textColor = "blue"; break;
+              case 2: textColor = "green"; break;
+              case 3: textColor = "red"; break;
+              case 4: textColor = "purple"; break;
+              case 5: textColor = "maroon"; break;
+              case 6: textColor = "turquoise"; break;
+              case 7: textColor = "black"; break;
+              case 8: textColor = "grey"; break;
             }
           }
         }
