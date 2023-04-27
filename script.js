@@ -9,6 +9,7 @@ const BOMBS_COUNT = 10;
 
 var defeat = false;
 var victory = false;
+var clearedCellsCount = 0;
 
 // Cell constructor
 function Cell() {
@@ -57,7 +58,7 @@ render();
 // Game functions definitions
 //
 
-function discoverCell(row, col) {
+function discoverCell(row, col, event) {
   if (cells[row][col].hasBeenFlagged) {
     return;
   }
@@ -74,7 +75,7 @@ function discoverCell(row, col) {
     //
     cells[row][col].discovered = true;
     clearedCellsCount++;
-    var cellElement = document.getElementById(`cell-${row}-${col}`);
+    const cellElement = document.querySelector(`#playfield div:nth-child(${row+1}) div:nth-child(${col+1})`);
     cellElement.classList.add("discovered");
     if (clearedCellsCount == ROWS_COUNT * COLS_COUNT - BOMBS_COUNT) {
       victory = true;
@@ -83,11 +84,14 @@ function discoverCell(row, col) {
     }
     //
     // TODO: Task 6 - Discover neighbor cells recursively, as long as there are no adjacent bombs to the current cell.
-    // else if (countAdjacentBombs(row, col) == 0) {
-    for (var i = row - 1; i <= row + 1; i++) {
-      for (var j = col - 1; j <= col + 1; j++) {
-        if (i >= 0 && i < ROWS_COUNT && j >= 0 && j < COLS_COUNT && !(i == row && j == col) && !cells[i][j].discovered) {
-          discoverCell(i, j);
+    // 
+    else if (countAdjacentBombs(row, col) == 0) {
+      for (var i = row - 1; i <= row + 1; i++) {
+        for (var j = col - 1; j <= col + 1; j++) {
+          if (i >= 0 && i < ROWS_COUNT && j >= 0 && j < COLS_COUNT && !(i == row && j == col) 
+          && !cells[i][j].discovered && !cells[i][j].hasBomb && !cells[i][j].hasBeenFlagged) {
+            discoverCell(i, j);
+          }
         }
       }
     }
@@ -252,7 +256,7 @@ function onCellClicked(row, col, event) {
   if (event.shiftKey) {
     flagCell(row, col);
   } else {
-    discoverCell(row, col);
+    discoverCell(row, col, event);
   }
   checkForVictory();
   render();
