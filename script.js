@@ -25,14 +25,18 @@ var defeat = false;
 var victory = false;
 var clearedCellsCount = 0;
 
-var ROWS_COUNT, COLS_COUNT, BOMBS_COUNT;
+var rowsCount = 10;
+var colsCount = 10;
+var bombsCount = 15;
 var cells;
 var timerId;
 
+startGame(rowsCount, colsCount, bombsCount);
+
 function startGame(rows, cols, bombs) {
-  ROWS_COUNT = rows; 
-  COLS_COUNT = cols;
-  BOMBS_COUNT = bombs;
+  rowsCount = rows; 
+  colsCount = cols;
+  bombsCount = bombs;
   
   // Cell constructor
   class Cell {
@@ -44,18 +48,18 @@ function startGame(rows, cols, bombs) {
   }
   
   // Initialize cells
-  cells = Array(ROWS_COUNT);
-  for (var row = 0; row < ROWS_COUNT; row++) {
-    cells[row] = Array(COLS_COUNT);
-    for (var col = 0; col < COLS_COUNT; col++) {
+  cells = Array(rowsCount);
+  for (var row = 0; row < rowsCount; row++) {
+    cells[row] = Array(colsCount);
+    for (var col = 0; col < colsCount; col++) {
       cells[row][col] = new Cell();
     }
   }
   
-  for (let i = 0; i < BOMBS_COUNT; i++) {
+  for (let i = 0; i < bombsCount; i++) {
     // Adding bombs at random positions
-    let row = Math.floor(Math.random() * ROWS_COUNT);
-    let col = Math.floor(Math.random() * COLS_COUNT);
+    let row = Math.floor(Math.random() * rowsCount);
+    let col = Math.floor(Math.random() * colsCount);
     if (cells[row][col].isBomb) {
       i--;
     }
@@ -90,7 +94,7 @@ function discoverCell(row, col, event) {
     else if (countAdjacentBombs(row, col) == 0) {
       for (var i = row - 1; i <= row + 1; i++) {
         for (var j = col - 1; j <= col + 1; j++) {
-          if (i >= 0 && i < ROWS_COUNT && j >= 0 && j < COLS_COUNT && !(i == row && j == col) 
+          if (i >= 0 && i < rowsCount && j >= 0 && j < colsCount && !(i == row && j == col) 
           && !cells[i][j].discovered && !cells[i][j].hasBomb) {
             discoverCell(i, j);
           }
@@ -112,7 +116,7 @@ function countAdjacentBombs(row, col) {
   var count = 0;
   for (var i = row - 1; i <= row + 1; i++) {
     for (var j = col - 1; j <= col + 1; j++) {
-      if (i >= 0 && i < ROWS_COUNT && j >= 0 && j < COLS_COUNT && cells[i][j].isBomb) {
+      if (i >= 0 && i < rowsCount && j >= 0 && j < colsCount && cells[i][j].isBomb) {
         count++;
       }
     }
@@ -122,20 +126,20 @@ function countAdjacentBombs(row, col) {
 
 function getBombsCount() {
   var count = 0;
-  for (var row = 0; row < ROWS_COUNT; row++) {
-    for (var col = 0; col < COLS_COUNT; col++) {
+  for (var row = 0; row < rowsCount; row++) {
+    for (var col = 0; col < colsCount; col++) {
       if (cells[row][col].hasBeenFlagged) {
         count++;
       }
     }
   }
-  return count + "/" + BOMBS_COUNT;
+  return count + "/" + bombsCount;
 }
 
 function getClearedCells() {
   var count = 0;
-  for (var row = 0; row < ROWS_COUNT; row++) {
-    for (var col = 0; col < COLS_COUNT; col++) {
+  for (var row = 0; row < rowsCount; row++) {
+    for (var col = 0; col < colsCount; col++) {
       if (cells[row][col].discovered) {
         count++;
       }
@@ -145,7 +149,7 @@ function getClearedCells() {
 }
 
 function getTotalCellsToClear() {
-  return ROWS_COUNT * COLS_COUNT - BOMBS_COUNT;
+  return rowsCount * colsCount - bombsCount;
 }
 
 function checkForVictory() {
@@ -177,9 +181,9 @@ function getMessage() {
 function render() {
   var playfield = document.getElementById("playfield");
   var html = "";
-  for (var row = 0; row < ROWS_COUNT; row++) {
+  for (var row = 0; row < rowsCount; row++) {
     html += '<div class="row">';
-    for (var col = 0; col < COLS_COUNT; col++) {
+    for (var col = 0; col < colsCount; col++) {
       var cell = cells[row][col];
       var cellText = "";
       var cssClass = "";
