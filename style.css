@@ -27,9 +27,29 @@ header, #message {
     text-align: center;
 }
 
-h1 {
+h1, form {
     margin-bottom: 20px;
 }
+
+form {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 10px;
+    width: 60%;
+    margin: 20px auto;
+  }
+  
+  form label {
+    margin-right: 10px;
+  }
+  
+  form input,
+  form select {
+    flex: 1;
+    margin-right: 10px;
+  }
 
 #playfield {
     display: block;

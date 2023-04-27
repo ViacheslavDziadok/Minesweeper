@@ -2,56 +2,71 @@
 // having to click on all cells to reveal them.
 const CHEAT_REVEAL_ALL = false;
 
-// Prompt user for number of rows, columns and bombs
-var inputRowsCount = parseInt(prompt("Hello to the Minesweeper game!\nEnter number of rows:", "10"));
-var inputColsCount = parseInt(prompt("Enter number of columns:", "10"));
-var bombsByDifficulty = prompt("Select game mode (Easy, Medium, Hard):", "Medium").toLowerCase();
+document.querySelector('form').addEventListener('submit', function(e) {
+  e.preventDefault();
 
-const ROWS_COUNT = ((inputRowsCount >= 5) && (inputRowsCount <= 20))? inputRowsCount : 10;
-const COLS_COUNT = ((inputColsCount >= 5) && (inputColsCount <= 20))? inputColsCount : 10;
-const BOMBS_COUNT = bombsByDifficulty === "easy" ? Math.round(ROWS_COUNT * COLS_COUNT * 0.10) : 
-                    bombsByDifficulty === "hard" ? Math.round(ROWS_COUNT * COLS_COUNT * 0.20) : 
-                                      /* medium */ Math.round(ROWS_COUNT * COLS_COUNT * 0.15);
+  // Get values from form
+  const inputRowsCount = parseInt(document.querySelector('#rows').value);
+  const inputColsCount = parseInt(document.querySelector('#cols').value);
+  const bombsByDifficulty = document.querySelector('#difficulty').value.toLowerCase();
 
+  // Validate input and set defaults if necessary
+  const ROWS_COUNT = ((inputRowsCount >= 5) && (inputRowsCount <= 20))? inputRowsCount : 10;
+  const COLS_COUNT = ((inputColsCount >= 5) && (inputColsCount <= 20))? inputColsCount : 10;
+  const BOMBS_COUNT = bombsByDifficulty === "easy" ? Math.round(ROWS_COUNT * COLS_COUNT * 0.125) : 
+                      bombsByDifficulty === "hard" ? Math.round(ROWS_COUNT * COLS_COUNT * 0.20) : 
+                                        /* medium */ Math.round(ROWS_COUNT * COLS_COUNT * 0.15);
+
+  // Start game with the specified settings
+  startGame(ROWS_COUNT, COLS_COUNT, BOMBS_COUNT);
+});
+  
 var defeat = false;
 var victory = false;
 var clearedCellsCount = 0;
 
-// Cell constructor
-class Cell {
-  constructor() {
-    this.discovered = false;
-    this.isBomb = false;
-    this.hasBeenFlagged = false;
+var ROWS_COUNT, COLS_COUNT, BOMBS_COUNT;
+var cells;
+var timerId;
+
+function startGame(rows, cols, bombs) {
+  ROWS_COUNT = rows; 
+  COLS_COUNT = cols;
+  BOMBS_COUNT = bombs;
+  
+  // Cell constructor
+  class Cell {
+    constructor() {
+      this.discovered = false;
+      this.isBomb = false;
+      this.hasBeenFlagged = false;
+    }
   }
+  
+  // Initialize cells
+  cells = Array(ROWS_COUNT);
+  for (var row = 0; row < ROWS_COUNT; row++) {
+    cells[row] = Array(COLS_COUNT);
+    for (var col = 0; col < COLS_COUNT; col++) {
+      cells[row][col] = new Cell();
+    }
+  }
+  
+  for (let i = 0; i < BOMBS_COUNT; i++) {
+    // Adding bombs at random positions
+    let row = Math.floor(Math.random() * ROWS_COUNT);
+    let col = Math.floor(Math.random() * COLS_COUNT);
+    if (cells[row][col].isBomb) {
+      i--;
+    }
+    else {
+      cells[row][col].isBomb = true;
+    }
+  }
+  
+  // Once the game has been initialized, we "render" it.
+  render();
 }
-
-// Initialize cells
-var cells = Array(ROWS_COUNT);
-for (var row = 0; row < ROWS_COUNT; row++) {
-  cells[row] = Array(COLS_COUNT);
-  for (var col = 0; col < COLS_COUNT; col++) {
-    cells[row][col] = new Cell();
-  }
-}
-
-for (let i = 0; i < BOMBS_COUNT; i++) {
-  // Adding bombs at random positions
-  let row = Math.floor(Math.random() * ROWS_COUNT);
-  let col = Math.floor(Math.random() * COLS_COUNT);
-  if (cells[row][col].isBomb) {
-    i--;
-  }
-  else {
-    cells[row][col].isBomb = true;
-  }
-}
-
-
-// Once the game has been initialized, we "render" it.
-render();
-
-
 //
 // Game functions definitions
 //
@@ -217,6 +232,7 @@ function render() {
   document.getElementById("bombs-count").innerText = getBombsCount().toString();
   document.getElementById("cleared-cells-count").innerText = getClearedCells().toString();
   document.getElementById("total-cells-to-clear").innerText = getTotalCellsToClear().toString();
+  renderTime();
 
   // Update message
   document.getElementById("message").innerHTML = getMessage();
@@ -235,18 +251,21 @@ function onCellClicked(row, col, event) {
 }
 
 // time rendering
-var startTime = new Date();
-var currentTime = new Date();
-
-function updateTime() {
-  if (victory || defeat) {
-    clearInterval(timerId);
-  }
-  currentTime = new Date();
-  var elapsed = currentTime.getTime() - startTime.getTime();
-  var elapsedFormatted = new Date(elapsed).toISOString().slice(11, 19);
+function renderTime() {
+  clearInterval(timerId);
+  var startTime = new Date();
+  var currentTime = new Date();
   
-  document.getElementById("time").innerText = elapsedFormatted;
-}
+  function updateTime() {
+    if (victory || defeat) {
+      clearInterval(timerId);
+    }
+    currentTime = new Date();
+    var elapsed = currentTime.getTime() - startTime.getTime();
+    var elapsedFormatted = new Date(elapsed).toISOString().slice(11, 19);
+    
+    document.getElementById("time").innerText = elapsedFormatted;
+  }
 
-var timerId = setInterval(updateTime, 1000);
+  timerId = setInterval(updateTime, 1000);
+}
