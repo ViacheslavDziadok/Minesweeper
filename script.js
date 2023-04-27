@@ -233,3 +233,20 @@ function onCellClicked(row, col, event) {
   checkForVictory();
   render();
 }
+
+// time rendering
+var startTime = new Date();
+var currentTime = new Date();
+
+function updateTime() {
+  if (victory || defeat) {
+    clearInterval(timerId);
+  }
+  currentTime = new Date();
+  var elapsed = currentTime.getTime() - startTime.getTime();
+  var elapsedFormatted = new Date(elapsed).toISOString().substr(11, 8);
+  
+  document.getElementById("time").innerText = elapsedFormatted;
+}
+
+var timerId = setInterval(updateTime, 1000);

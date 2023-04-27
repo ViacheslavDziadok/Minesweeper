@@ -27,8 +27,8 @@ header, #message {
     text-align: center;
 }
 
-h2 {
-    margin-bottom: 50px;
+h1 {
+    margin-bottom: 20px;
 }
 
 #playfield {
@@ -37,7 +37,7 @@ h2 {
     margin: auto;
     border: lightslategrey solid 1px;
     width: fit-content;
-    margin-top: 50px;
+    margin-top: 20px;
     box-shadow: 0px 2px 6px rgb(0, 0, 0, 0.2);
     user-select: none;
     -webkit-user-select: none;
