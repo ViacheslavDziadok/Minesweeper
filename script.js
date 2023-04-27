@@ -81,6 +81,7 @@ function startGame(rows, cols, bombs) {
   
   // Once the game has been initialized, we "render" it.
   render();
+  renderTime();
 }
 //
 // Game functions definitions
@@ -247,7 +248,6 @@ function render() {
   document.getElementById("bombs-count").innerText = getBombsCount().toString();
   document.getElementById("cleared-cells-count").innerText = getClearedCells().toString();
   document.getElementById("total-cells-to-clear").innerText = getTotalCellsToClear().toString();
-  renderTime();
 
   // Update message
   document.getElementById("message").innerHTML = getMessage();
