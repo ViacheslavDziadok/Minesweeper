@@ -2,6 +2,16 @@
 // having to click on all cells to reveal them.
 const CHEAT_REVEAL_ALL = false;
 
+var defeat = false;
+var victory = false;
+var clearedCellsCount = 0;
+
+var rowsCount = 10;
+var colsCount = 10;
+var bombsCount = 15;
+var cells;
+var timerId;
+
 document.querySelector('form').addEventListener('submit', function(e) {
   e.preventDefault();
 
@@ -21,26 +31,22 @@ document.querySelector('form').addEventListener('submit', function(e) {
   const inputColsCount = parseInt(document.querySelector('#cols').value);
   const bombsByDifficulty = document.querySelector('#difficulty').value.toLowerCase();
 
+  const modifiers = {
+    "easy": 0.125,
+    "medium": 0.15,
+    "hard": 0.20
+  }
+
   // Validate input and set defaults if necessary
-  const ROWS_COUNT = ((inputRowsCount >= 5) && (inputRowsCount <= 20))? inputRowsCount : 10;
-  const COLS_COUNT = ((inputColsCount >= 5) && (inputColsCount <= 20))? inputColsCount : 10;
-  const BOMBS_COUNT = bombsByDifficulty === "easy" ? Math.round(ROWS_COUNT * COLS_COUNT * 0.125) : 
-                      bombsByDifficulty === "hard" ? Math.round(ROWS_COUNT * COLS_COUNT * 0.20) : 
-                                        /* medium */ Math.round(ROWS_COUNT * COLS_COUNT * 0.15);
+  rowsCount = ((inputRowsCount >= 5) && (inputRowsCount <= 20)) ? inputRowsCount : 10;
+  colsCount = ((inputColsCount >= 5) && (inputColsCount <= 20)) ? inputColsCount : 10;
+  bombsCount = bombsByDifficulty === "easy" ? Math.round(rowsCount * colsCount * modifiers.easy) :
+    bombsByDifficulty === "hard" ? Math.round(rowsCount * colsCount * modifiers.hard) :
+                                        /* medium */ Math.round(rowsCount * colsCount * modifiers.medium);
 
   // Start game with the specified settings
-  startGame(ROWS_COUNT, COLS_COUNT, BOMBS_COUNT);
+  startGame(rowsCount, colsCount, bombsCount);
 });
-  
-var defeat = false;
-var victory = false;
-var clearedCellsCount = 0;
-
-var rowsCount = 10;
-var colsCount = 10;
-var bombsCount = 15;
-var cells;
-var timerId;
 
 startGame(rowsCount, colsCount, bombsCount);
 
@@ -202,9 +208,13 @@ function render() {
       var textColor = "";
       if (cell.discovered || CHEAT_REVEAL_ALL || defeat) {
         cssClass = "discovered";
-        if (cell.isBomb) {
+        if (cell.isBomb && !cell.hasBeenFlagged) {
           cellText = "💣";
-        } else {
+        } 
+        else if (cell.hasBeenFlagged && cell.isBomb) {
+          cellText = "🚩";
+        } 
+        else {
           var adjBombs = countAdjacentBombs(row, col);
 
           if (adjBombs > 0) {

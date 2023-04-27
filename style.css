@@ -34,21 +34,39 @@ h1, form {
 form {
     display: flex;
     flex-direction: row;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 10px;
-    width: 60%;
+    justify-content: center;
+    width: 40%;
     margin: 20px auto;
   }
   
   form label {
+    align-self: center;
+    font-size: 1.05rem;
     margin-right: 10px;
   }
   
   form input,
   form select {
     flex: 1;
+    font-size: 1.05rem;
+    text-align: center;
     margin-right: 10px;
+  }
+
+  form button {
+    flex: 1;
+    padding: 5px 20px;
+    font-size: 1.05rem;
+    width: 100%;
+    margin-left: 10px;
+  }
+
+  .stats {
+    display: flex;
+    justify-content: center;
+    width: 60%;
+    gap: 2em;
+    margin: 20px auto;
   }
 
 #playfield {
