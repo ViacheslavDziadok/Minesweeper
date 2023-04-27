@@ -27,6 +27,10 @@ header, #message {
     text-align: center;
 }
 
+h2 {
+    margin-bottom: 50px;
+}
+
 #playfield {
     display: block;
     background: lightgrey;

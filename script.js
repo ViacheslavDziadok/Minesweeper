@@ -2,9 +2,16 @@
 // having to click on all cells to reveal them.
 const CHEAT_REVEAL_ALL = false;
 
-const ROWS_COUNT = 10;
-const COLS_COUNT = 10;
-const BOMBS_COUNT = 10;
+// Prompt user for number of rows, columns and bombs
+var inputRowsCount = parseInt(prompt("Hello to the Minesweeper game!\nEnter number of rows:", "10"));
+var inputColsCount = parseInt(prompt("Enter number of columns:", "10"));
+var bombsByDifficulty = prompt("Select game mode (Easy, Medium, Hard):", "Medium").toLowerCase();
+
+const ROWS_COUNT = ((inputRowsCount >= 5) && (inputRowsCount <= 20))? inputRowsCount : 10;
+const COLS_COUNT = ((inputColsCount >= 5) && (inputColsCount <= 20))? inputColsCount : 10;
+const BOMBS_COUNT = bombsByDifficulty === "easy" ? Math.round(ROWS_COUNT * COLS_COUNT * 0.10) : 
+                    bombsByDifficulty === "hard" ? Math.round(ROWS_COUNT * COLS_COUNT * 0.20) : 
+                                      /* medium */ Math.round(ROWS_COUNT * COLS_COUNT * 0.15);
 
 var defeat = false;
 var victory = false;
@@ -31,7 +38,7 @@ for (var row = 0; row < ROWS_COUNT; row++) {
 for (let i = 0; i < BOMBS_COUNT; i++) {
   // Adding bombs at random positions
   let row = Math.floor(Math.random() * ROWS_COUNT);
-  let col = Math.floor(Math.random() * ROWS_COUNT);
+  let col = Math.floor(Math.random() * COLS_COUNT);
   if (cells[row][col].isBomb) {
     i--;
   }
@@ -148,7 +155,7 @@ function getMessage() {
   } else if (defeat) {
     return "Boom! 💥<br><br>Refresh the page to try again.";
   }
-  return "";
+  return "Flag cells holding a \"Shift\" key while clicking the cell";
 }
 
 // "Render" the game. Update the content of the page to reflect any changes to the game state.
