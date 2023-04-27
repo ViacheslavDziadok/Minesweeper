@@ -244,7 +244,7 @@ function updateTime() {
   }
   currentTime = new Date();
   var elapsed = currentTime.getTime() - startTime.getTime();
-  var elapsedFormatted = new Date(elapsed).toISOString().substr(11, 8);
+  var elapsedFormatted = new Date(elapsed).toISOString().slice(11, 19);
   
   document.getElementById("time").innerText = elapsedFormatted;
 }
