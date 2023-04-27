@@ -87,7 +87,7 @@ function startGame(rows, cols, bombs) {
 // Game functions definitions
 //
 
-function discoverCell(row, col, event) {
+function discoverCell(row, col) {
   // If the player "discovers" a bomb (clicks on it without holding shift), 
   // set the variable defeat to true. This will be used to display a message to the player.
   if (cells[row][col].isBomb) {
