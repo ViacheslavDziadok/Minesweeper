@@ -5,6 +5,17 @@ const CHEAT_REVEAL_ALL = false;
 document.querySelector('form').addEventListener('submit', function(e) {
   e.preventDefault();
 
+  var body = document.getElementsByTagName("body")[0];
+  if (victory) {
+    victory = false;
+    body.classList.remove("victory");
+  }
+
+  else if (defeat) {
+    defeat = false;
+    body.classList.remove("defeat");
+  }
+
   // Get values from form
   const inputRowsCount = parseInt(document.querySelector('#rows').value);
   const inputColsCount = parseInt(document.querySelector('#cols').value);
@@ -170,9 +181,9 @@ function checkForVictory() {
 //
 function getMessage() {
   if (victory == true) {
-    return "Well done! 👏🏼<br><br>Refresh the page to start again.";
+    return "Well done! 👏🏼<br><br>Refresh the page or press the button to start again.";
   } else if (defeat) {
-    return "Boom! 💥<br><br>Refresh the page to try again.";
+    return "Boom! 💥<br><br>Refresh the page or press the button to try again.";
   }
   return "Flag cells holding a \"Shift\" key while clicking the cell";
 }
